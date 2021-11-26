@@ -1,6 +1,5 @@
 package org.closuer.userregsterdemo.controller;
 
-import org.closuer.userregsterdemo.dto.AppUserDto;
 import org.closuer.userregsterdemo.entity.AppUser;
 import org.closuer.userregsterdemo.exception.AppUserException;
 import org.closuer.userregsterdemo.model.ErrorMessage;
@@ -9,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/user")
@@ -65,7 +66,7 @@ public class AppUserController {
         }
     }
 
-    @GetMapping(value = "/verify")
+    @PutMapping(value = "/verify")
     public ResponseEntity<Object> appUserVerify(@RequestParam Integer id, @RequestParam Integer userCode) throws AppUserException{
         try {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(appUserService.appUserVerify(id,userCode));
@@ -74,5 +75,10 @@ public class AppUserController {
             ErrorMessage errorMessage = new ErrorMessage().withErrorBody(e.getMessage()).withErrorCode(4).withErrorName("USER_VERIFY_ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
         }
+    }
+
+    @GetMapping(value = "/search/{attributeName}")
+    public List<AppUser> testSearch(@PathVariable String attributeName, @RequestParam Object text){
+      return   appUserService.appUserSearchTest(attributeName,text);
     }
 }

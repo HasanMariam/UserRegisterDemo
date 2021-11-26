@@ -67,6 +67,12 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>ch.dvbern.oss.datehelper</groupId>
+            <artifactId>date-helper</artifactId>
+            <version>1.2.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

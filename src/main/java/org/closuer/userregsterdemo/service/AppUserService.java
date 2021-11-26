@@ -7,13 +7,13 @@ import org.closuer.userregsterdemo.entity.UserCode;
 import org.closuer.userregsterdemo.exception.AppUserException;
 import org.closuer.userregsterdemo.mapper.AppUserMapper;
 import org.closuer.userregsterdemo.repo.AppUserRepo;
-import org.closuer.userregsterdemo.repo.UserCodeRepo;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import org.closuer.userregsterdemo.repo.dynamicsearch.*;
 
 @Service
 public class AppUserService {
@@ -24,8 +24,8 @@ public class AppUserService {
     @Autowired
     MailService mailService;
 
-    @Autowired
-    UserCodeRepo userCodeRepo;
+//    @Autowired
+//    UserCodeRepo userCodeRepo;
 
     public void appUserDelete(AppUser appUser){
         appUserRepo.delete(appUser);
@@ -41,7 +41,7 @@ public class AppUserService {
         int verifyCode= (int) (Math.random()*10000);
         mailService.newAppUserMail(appUser.getEmail(),"verify your account","use this code to verify your account : "+verifyCode);
         AppUser newAppUser = appUserRepo.save(appUser.withActive(false).withCreatedAt(Instant.now()));
-        UserCode userCode= userCodeRepo.save(new UserCode().withCode(verifyCode));
+        UserCode userCode = new UserCode().withCode(verifyCode);
          return AppUserMapper.MAPPER.appUserEntityToDto(appUserRepo.save(newAppUser.withUserCode(userCode)));
 
     }
@@ -67,5 +67,11 @@ public class AppUserService {
           return true;}
         else return false;
 
+    }
+
+    public List<AppUser> appUserSearchTest (String attributeName, Object vlue){
+        GenericSpecification<AppUser> genericSpecification = new GenericSpecification<AppUser>();
+        genericSpecification.add(new SearchCriteria(attributeName, vlue, SearchOperation.EQUAL));
+        return appUserRepo.findAll(genericSpecification);
     }
 }
